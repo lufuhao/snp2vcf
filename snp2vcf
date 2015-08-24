@@ -1,0 +1,108 @@
+#!/bin/sh
+RunDir=$(cd `dirname $(readlink -f $0)`; pwd)
+MachType=$(uname -m)
+
+################# help message ######################################
+help()
+{
+cat<<HELP
+
+snp2vcf
+
+Version: 20141003
+
+Requirements:
+	Programs: vcftools, tabix, bgzip
+
+Descriptions:
+	transform mpileup files into multiple-sample VCF
+
+Options:
+  -h    Print this help message
+  -i    input path
+  -o    Final VCF file name
+  -f    PATH to snpEff.jar
+  -x    Index name for snpEff
+
+Example:
+  cnp2vcf -i /path/to/my/snp/folder -o 100sample.vcf
+
+Author:
+  Fu-Hao Lu
+  Post-Doctoral Scientist in Micheal Bevan laboratory
+  Cell and Developmental Department, John Innes Centre
+  Norwich NR4 7UH, United Kingdom
+  E-mail: Fu-Hao.Lu@jic.ac.uk
+HELP
+exit 0
+}
+[ -z "$1" ] && help
+[ "$1" = "-h" ] || [ "$1" = "--help" ] && help
+
+
+
+#################### Defaults #######################################
+echo -e "\n######################\nsnp2vcf initializing ...\n#######################\n"
+function ProgramInstallTest {
+  if [ $# -eq 0 ] || [ $# -gt 1 ]; then
+    echo -1
+  elif [ $# -eq 1 ]; then
+    if which $1 >/dev/null; then
+      echo "$1 installed"
+    else
+      echo "$1 NOT found"
+      exit 1
+    fi
+  fi
+}
+
+
+
+ProgramInstallTest vcf-convert
+ProgramInstallTest bgzip
+ProgramInstallTest vcf-merge
+ProgramInstallTest java
+
+
+opt_f="$RunDir/utils/snpEff.jar"
+while [ -n "$1" ]; do
+  case "$1" in
+    -h) help;shift 1;;
+    -i) opt_i=$2;shift 2;;
+    -o) opt_o=$2;shift 2;;
+    -f) opt_f=$2;shift 2;;
+    -x) opt_x=$2;shift 2;;
+    --) shift;break;;
+    -*) echo "error: no such option $1. -h for help";exit 1;;
+    *) break;;
+  esac
+done
+
+
+
+echo "Converting mpileup into vcf ..."
+CurDir=$(pwd)
+#if [ -d $CurDir/0.vcf ]; then
+#  rm -rf $CurDir/0.vcf
+#fi
+#mkdir -p $CurDir/0.vcf/
+cd $CurDir/0.vcf
+#for file in `ls $opt_i/*`; do
+#  filename=${file##*/}
+#  filebasename=${filename%.*}
+#  $RunDir/utils/sam2vcf.pl -R < $file | vcf-convert -v 4.0 | bgzip > $filebasename.vcf.gz
+#  tabix -p vcf $filebasename.vcf.gz
+#done
+
+echo "Merging vcf into multiple-sample file ..."
+vcffiles=`ls $CurDir/0.vcf/*.vcf.gz`
+b="${vcffiles[@]}"
+echo $b
+vcfmergefiles=`printf " %s" "${b[@]}" | cut -c2-`
+cd $CurDir
+vcf-merge $b > $opt_o.merge.vcf > merge.log
+echo "SNP annotating using snpEff ..."
+java -jar $opt_f -v -no-downstream -no-intergenic -no-upstream $opt_x $opt_o.merge.vcf > $opt_o.eff.vcf > annotation.log
+
+echo -e "Annotation successfully finished\n\nYour final output: $opt_o.eff.vcf"
+exit 0
