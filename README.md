@@ -1,19 +1,19 @@
-#snp2vcf
+# snp2vcf
 
 
 
-##Version: 20141003
+## Version: 20141003
 
 
 
-##Descriptions:
+## Descriptions:
 
 	Comvert mpileup SNP into vcf, annotate SNPs based on snpEff
 	database, and transform VCF into genotypes file.
 
 
 
-##Requirements:
+## Requirements:
 
 +  VCFtools
 
@@ -36,7 +36,7 @@
 	$java -jar /path/to/snpEff.jar download athalianaTair10
 
 
-##Running:
+## Running:
 
 - 1. convert mpileup into multiple-sample vcf
 
@@ -48,13 +48,13 @@
 
 
 
-##Author:
+## Author:
 	Fu-Hao Lu
 	Post-Doctoral Scientist in Micheal Bevan laboratory
 	Cell and Developmental Department, John Innes Centre
 	Norwich NR4 7UH, United Kingdom
 	E-mail: Fu-Hao.Lu\@jic.ac.uk
 
-##Copyright
+## Copyright
 
 	Copyright (c) 2014-2018 Fu-Hao Lu
