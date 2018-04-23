@@ -38,11 +38,11 @@
 
 ## Running:
 
-- 1. convert mpileup into multiple-sample vcf
+  1. convert mpileup into multiple-sample vcf
 
 	$snp2vcf -i /path/to/snp/folder -o All.samples.vcf -x athalianaTair9
 
-- 2.Transform vcf into genotypes
+  2.Transform vcf into genotypes
 
 	$perl /path/to/vcf2geno.pl -i All.samples.vcf --region Chr1:1-20000 -o All.genotypes.txt
 
