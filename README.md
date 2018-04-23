@@ -38,7 +38,7 @@
 
 ## Running:
 
-  1. convert mpileup into multiple-sample vcf
+  1.Convert mpileup into multiple-sample vcf
 
 	$snp2vcf -i /path/to/snp/folder -o All.samples.vcf -x athalianaTair9
 
